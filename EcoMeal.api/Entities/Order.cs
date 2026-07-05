@@ -8,8 +8,8 @@ namespace EcoMeal.api.Entities
         public int OrderId { get; set; }
         public required String Status { get; set; } = string.Empty;
         public required DateTime OrderDate { get; set; }
-        public required int PackageTypeId { get; set; }
-        public required PackageType PackageType { get; set; } = null!;
+        public required int PackageId { get; set; }
+        public required Package Package { get; set; } = null!;
         public required int UserId { get; set; }
         public required User User { get; set; } = null!;
     }

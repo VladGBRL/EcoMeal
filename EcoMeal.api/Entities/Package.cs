@@ -12,7 +12,7 @@ namespace EcoMeal.api.Entities
         public required DateTime StartPickUp { get; set; }
         public required DateTime EndPickUp { get; set; }
         public required int BusinessTypeId { get; set; }
-        public required BusinessType BusinessType { get; set; } = null!;
+        public required Business Business { get; set; } = null!;
         public required int PackageTypeId { get; set; }
         public required PackageType PackageType { get; set; } = null!;
     }
