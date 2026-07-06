@@ -1,17 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace EcoMeal.api.Entities
+namespace EcoMeal.api.Application.Models
 {
-    public class Business
+    public class BusinessDTO
     {
-        [Key]
         public int BusinessId { get; set; }
         public required string Name { get; set; } = string.Empty;
         public required string Address { get; set; } = string.Empty;
-
         public required string Contact { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public required int BusinessTypeId { get; set; }
-        public required BusinessType BusinessType { get; set; } = null!;
+        public required string BusinessTypeName {get; set;} = string.Empty;
     }
 }
