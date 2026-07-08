@@ -13,5 +13,6 @@ namespace EcoMeal.api.Entities
         public string Description { get; set; } = string.Empty;
         public required int BusinessTypeId { get; set; }
         public required BusinessType BusinessType { get; set; } = null!;
+        public ICollection<Package> Packages = new List<Package>();
     }
 }

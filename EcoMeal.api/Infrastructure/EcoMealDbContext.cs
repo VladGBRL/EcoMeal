@@ -34,7 +34,7 @@ public class EcoMealDbContext : DbContext
         modelBuilder.Entity<Package>()
             .HasOne(b => b.Business)
             .WithMany()
-            .HasForeignKey(p => p.BusinessTypeId)
+            .HasForeignKey(p => p.BusinessId)
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Order>()
             .HasOne(p=> p.Package)

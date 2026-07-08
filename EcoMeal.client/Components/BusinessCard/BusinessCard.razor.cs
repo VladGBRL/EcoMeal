@@ -1,5 +1,4 @@
 using EcoMeal.client.Models;
-using EcoMeal.client.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace EcoMeal.client.Components.BusinessCard;
@@ -7,7 +6,8 @@ namespace EcoMeal.client.Components.BusinessCard;
 public partial class BusinessCard
 {
     [Parameter]
-    public required BusinessModel Business {get; set;}
-    [Inject]
-    public required BusinessService BusinessService {get; set;}
+    public required BusinessModel Business { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDeleted { get; set; }
 }

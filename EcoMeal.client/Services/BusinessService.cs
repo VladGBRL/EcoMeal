@@ -15,9 +15,9 @@ public class BusinessService
         var businesses = await _http.GetFromJsonAsync<List<BusinessModel>>("/api/business");
         return businesses ?? new List<BusinessModel>();
     }
-    public async Task<bool> DeleteAsync(int id)
+     public async Task<bool> DeleteAsync(int id)
     {
-        var response = await _http.DeleteAsync($"api/business/{id}");
+        var response = await _http.DeleteAsync($"/api/business/{id}");
         return response.IsSuccessStatusCode;
     }
 }

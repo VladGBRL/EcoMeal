@@ -4,6 +4,7 @@ using EcoMeal.api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoMeal.api.Migrations
 {
     [DbContext(typeof(EcoMealDbContext))]
-    partial class EcoMealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260708114420_addedBusinessesAndPackages")]
+    partial class addedBusinessesAndPackages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,7 +119,7 @@ namespace EcoMeal.api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PackageId"));
 
-                    b.Property<int>("BusinessId")
+                    b.Property<int>("BusinessTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -125,10 +128,6 @@ namespace EcoMeal.api.Migrations
 
                     b.Property<DateTime>("EndPickUp")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumberOfPackages")
                         .HasColumnType("int");
@@ -144,7 +143,7 @@ namespace EcoMeal.api.Migrations
 
                     b.HasKey("PackageId");
 
-                    b.HasIndex("BusinessId");
+                    b.HasIndex("BusinessTypeId");
 
                     b.HasIndex("PackageTypeId");
 
@@ -227,7 +226,7 @@ namespace EcoMeal.api.Migrations
                 {
                     b.HasOne("EcoMeal.api.Entities.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId")
+                        .HasForeignKey("BusinessTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

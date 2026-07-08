@@ -1,4 +1,6 @@
 @namespace EcoMeal.client.Components.BusinessCard
+@using EcoMeal.client.Components.BusinessDeleteButton
+@using EcoMeal.client.Models
 
 <div class="card" style="width: 18rem;">
   <div class="card-body">
@@ -6,6 +8,6 @@
     <p class="card-text">@Business.Description</p>
     <p class="card-text">@Business.Address</p>
     <p class="card-text">@Business.Contact</p>
-    @*<a href="#" class="btn btn-primary">Go somewhere</a>*@
+    <BusinessDeleteButton BusinessId="@Business.BusinessId" OnDeleted="OnDeleted" />
   </div>
 </div>

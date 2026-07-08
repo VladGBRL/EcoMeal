@@ -49,4 +49,46 @@ public class BusinessController: ControllerBase
 
         return NoContent();
     }
+        [HttpGet("{id}")]
+    public async Task<ActionResult<BusinessDetailsDTO>> GetOneById(int id)
+    {
+        var business = await _context.Businesses
+            .Include(b => b.Packages)
+            .ThenInclude(p => p.PackageType)
+            .Select(b => new BusinessDetailsDTO
+            {
+                BusinessId = b.BusinessId,
+                Name = b.Name,
+                Address = b.Address,
+                Description = b.Description,
+                Contact = b.Contact,
+                BusinessTypeName = b.BusinessType.Name,
+            })
+            .FirstOrDefaultAsync(b => b.BusinessId == id);
+        if (business is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(business);
+    }
+     [HttpPost]
+    [Route("{id}/addPackage")]
+    public async Task<IActionResult> AddPackageToBusiness(int id, [FromBody] PackageAddDTO package)
+    {
+        _context.Packages.Add(new Package
+        {
+            Name = package.Name,
+            Description = package.Description,
+            Price = (double)package.Price,
+            StartPickUp = package.StartPickup,
+            EndPickUp = package.EndPickup,
+            NumberOfPackages = 1,
+            PackageTypeId = package.PackageTypeId,
+            BusinessId = id,
+        });
+        await _context.SaveChangesAsync();
+        return Created();
+    }
+
 }

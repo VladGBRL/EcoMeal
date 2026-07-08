@@ -15,4 +15,12 @@ public partial class BusinessList
     {
         Businesses = await BusinessService.GetAllAsync();
     }
+
+    private async Task HandleBusinessDeleted(int businessId)
+    {
+        Console.WriteLine($"BusinessList.HandleBusinessDeleted: {businessId}");
+        Businesses = await BusinessService.GetAllAsync();
+        StateHasChanged();
+    }
+
 }

@@ -1,12 +1,25 @@
+@namespace EcoMeal.client.Components.BusinessList
 @using EcoMeal.client.Components.BusinessCard
 @using EcoMeal.client.Models
-@if(Businesses is null){
-    <p> Loading... </p>
+
+@if (Businesses is null)
+{
+    <p>Loading...</p>
 }
-else{
-    @foreach(BusinessModel business in Businesses){
-        <div class = "col-3">
-            <BusinessCard Business="business"/>
+else if (Businesses.Count == 0)
+{
+    <p>No business found.</p>
+}
+else
+{
+    <div class="businessList">
+        <div class="row g-4">
+            @foreach (BusinessModel business in Businesses)
+            {
+                <div class="col-sm" @key="business.BusinessId">
+                    <BusinessCard Business="business" OnDeleted="HandleBusinessDeleted" />
+                </div>
+            }
         </div>
-    }
-} 
+    </div>
+}
