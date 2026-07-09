@@ -12,9 +12,9 @@ public class PackageAddModel
     [Range(0, 1000)]
     public double Price { get; set; }
     [Required]
-    public DateTime StartPickUp { get; set; }
+    public DateTime StartPickup { get; set; }
     [Required]
-    public DateTime EndPickUp { get; set; }
+    public DateTime EndPickup { get; set; }
     [Required]
     public int PackageTypeId { get; set; }
 }

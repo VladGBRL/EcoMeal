@@ -1,10 +1,6 @@
-﻿using EcoMeal.api.Application;
-using EcoMeal.api.Application.Models;
-using EcoMeal.api.Entities;
-
-
+﻿using EcoMeal.api.Application.Models;
 
 public class BusinessDetailsDTO : BusinessDTO
 {
-
+    public List<PackageDTO> Packages { get; set; } = new();
 }

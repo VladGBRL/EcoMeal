@@ -4,6 +4,7 @@ using EcoMeal.api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoMeal.api.Migrations
 {
     [DbContext(typeof(EcoMealDbContext))]
-    partial class EcoMealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709080010_FixBusinessRelationship")]
+    partial class FixBusinessRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,6 +117,9 @@ namespace EcoMeal.api.Migrations
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BusinessId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -140,6 +146,8 @@ namespace EcoMeal.api.Migrations
                     b.HasKey("PackageId");
 
                     b.HasIndex("BusinessId");
+
+                    b.HasIndex("BusinessId1");
 
                     b.HasIndex("PackageTypeId");
 
@@ -217,10 +225,14 @@ namespace EcoMeal.api.Migrations
             modelBuilder.Entity("EcoMeal.api.Entities.Package", b =>
                 {
                     b.HasOne("EcoMeal.api.Entities.Business", "Business")
-                        .WithMany("Packages")
+                        .WithMany()
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("EcoMeal.api.Entities.Business", null)
+                        .WithMany("Packages")
+                        .HasForeignKey("BusinessId1");
 
                     b.HasOne("EcoMeal.api.Entities.PackageType", "PackageType")
                         .WithMany()

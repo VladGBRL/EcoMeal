@@ -24,7 +24,8 @@ public class EcoMealDbContext : DbContext
             .HasOne(bt => bt.BusinessType)
             .WithMany()
             .HasForeignKey(b => b.BusinessTypeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
         
         modelBuilder.Entity<Package>()
             .HasOne(pt => pt.PackageType)
@@ -33,7 +34,7 @@ public class EcoMealDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Package>()
             .HasOne(b => b.Business)
-            .WithMany()
+            .WithMany(b => b.Packages)
             .HasForeignKey(p => p.BusinessId)
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<Order>()

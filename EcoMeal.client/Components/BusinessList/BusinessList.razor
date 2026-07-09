@@ -2,6 +2,11 @@
 @using EcoMeal.client.Components.BusinessCard
 @using EcoMeal.client.Models
 
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Businesses</h2>
+    <a href="/business/add" class="btn btn-primary">+ Add business</a>
+</div>
+
 @if (Businesses is null)
 {
     <p>Loading...</p>

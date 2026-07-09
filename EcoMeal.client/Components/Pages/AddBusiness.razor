@@ -1,0 +1,44 @@
+@page "/business/add"
+@page "/business/{Id:int}/edit"
+@using EcoMeal.client.Models
+@rendermode InteractiveServer
+
+<h2>@PageTitle</h2>
+
+@if (!string.IsNullOrEmpty(StatusMessage))
+{
+    <div class="alert alert-success">@StatusMessage</div>
+}
+
+<EditForm Model="Model" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label class="form-label">Name</label>
+    <InputText class="form-control mb-2" @bind-Value="Model.Name" placeholder="Business name" />
+    <ValidationMessage For="@(() => Model.Name)" />
+
+    <label class="form-label">Address</label>
+    <InputText class="form-control mb-2" @bind-Value="Model.Address" placeholder="Address" />
+    <ValidationMessage For="@(() => Model.Address)" />
+
+    <label class="form-label">Contact</label>
+    <InputText class="form-control mb-2" @bind-Value="Model.Contact" placeholder="Contact" />
+    <ValidationMessage For="@(() => Model.Contact)" />
+
+    <label class="form-label">Description</label>
+    <InputTextArea class="form-control mb-2" @bind-Value="Model.Description" placeholder="Description" />
+
+    <label class="form-label">Business type</label>
+    <InputSelect @bind-Value="Model.BusinessTypeId" class="form-control mb-2">
+        <option value="0" disabled>Choose business type...</option>
+        @foreach (var type in BusinessTypes)
+        {
+            <option value="@type.BusinessTypeId">@type.Name</option>
+        }
+    </InputSelect>
+    <ValidationMessage For="@(() => Model.BusinessTypeId)" />
+
+    <button type="submit" class="btn btn-primary mt-3">@ButtonText</button>
+    <a href="/" class="btn btn-secondary mt-3 ms-2">Cancel</a>
+</EditForm>

@@ -1,26 +1,62 @@
 @page "/business/{Id:int}"
 @using EcoMeal.client.Models
 @using EcoMeal.client.Services;
+@rendermode InteractiveServer
 
 @if (Business is null)
 {
+    <div class="container my-4">
+        <p class="text-muted">Business not found.</p>
+    </div>
     return;
 }
 
 <div class="container my-4">
-    <h1 class="mb-3">@Business.Name</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">@Business.Name</h1>
+        <a href="/business/@Id/edit" class="btn btn-outline-secondary btn-sm">Edit business</a>
+    </div>
     <p class="text-muted mb-4">@Business.Description</p>
     <p class="text-muted mb-4"><strong>Contact:</strong> @Business.Contact</p>
     <p class="text-muted mb-4"><strong>Business type:</strong> @Business.BusinessTypeName</p>
-    <p class="text-muted mb-4"><strong>Adress:</strong> @Business.Adress</p>
-
+    <p class="text-muted mb-4"><strong>Address:</strong> @Business.Adress</p>
 
     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-        <h2 class="mb-0">Package</h2>
+        <h2 class="mb-0">Packages</h2>
         <button type="button" class="btn btn-primary" @onclick="NavigateToAddPackage">
             + Add package
         </button>
     </div>
+
+    @if (Business.Packages.Count == 0)
+    {
+        <p class="text-muted">No packages yet.</p>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var package in Business.Packages)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-1">@package.Name</h5>
+                        <p class="mb-1">@package.Description</p>
+                        <small>Type: @package.PackageTypeName</small><br />
+                        <small>Price: @package.Price.ToString("0.00")</small><br />
+                        <small>From: @package.StartPickUp.ToString("dd/MM/yyyy HH:mm") to @package.EndPickUp.ToString("dd/MM/yyyy HH:mm")</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="() => NavigateToEditPackage(package.PackageId)">
+                            Edit
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" @onclick="() => DeletePackage(package.PackageId)">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 @code {
@@ -41,6 +77,17 @@
 
     public void NavigateToAddPackage()
     {
-        NavigationManager.NavigateTo($"business/{Id}/addPackage");
+        NavigationManager.NavigateTo($"/business/{Id}/addPackage");
+    }
+
+    public void NavigateToEditPackage(int packageId)
+    {
+        NavigationManager.NavigateTo($"/business/{Id}/packages/{packageId}/edit");
+    }
+
+    public async Task DeletePackage(int packageId)
+    {
+        await businessService.DeletePackageAsync(Id, packageId);
+        Business = await businessService.GetOneById(Id);
     }
 }

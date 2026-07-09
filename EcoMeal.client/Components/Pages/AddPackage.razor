@@ -1,10 +1,16 @@
 @page "/business/{BusinessId:int}/addPackage"
+@page "/business/{BusinessId:int}/packages/{PackageId:int}/edit"
 @using EcoMeal.client.Models
 @rendermode InteractiveServer
 
-<h2>Adauga pachet</h2>
+<h2>@PageTitle</h2>
 
-<EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
+@if (!string.IsNullOrEmpty(StatusMessage))
+{
+    <div class="alert alert-success">@StatusMessage</div>
+}
+
+<EditForm Model="PackageAddModel" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -20,20 +26,20 @@
     <InputNumber class="form-control mb-2" @bind-Value="PackageAddModel.Price" placeholder="0" />
 
     <label class="form-label">Start Pick-up</label>
-    <InputDate @bind-Value="PackageAddModel.StartPickUp" Type="InputDateType.DateTimeLocal" placeholder="Start Pick-up"
+    <InputDate @bind-Value="PackageAddModel.StartPickup" Type="InputDateType.DateTimeLocal" placeholder="Start Pick-up"
                class="form-control mb-2" />
 
     <label class="form-label">End Pick-up</label>
-    <InputDate @bind-Value="PackageAddModel.EndPickUp" Type="InputDateType.DateTimeLocal" placeholder="End Pick-up"
+    <InputDate @bind-Value="PackageAddModel.EndPickup" Type="InputDateType.DateTimeLocal" placeholder="End Pick-up"
                class="form-control mb-2" />
 
     <label class="form-label">Tip pachet</label>
     <InputSelect @bind-Value="PackageAddModel.PackageTypeId" class="form-control mb-2">
-        <option value="0" disabled>Alege tipul...</option>
-        @* @foreach (var packageType in PackageTypes)
+        <option value="0" disabled>Choose package type...</option>
+        @foreach (var packageType in PackageTypes)
         {
-            <option value="@packageType.Id">@packageType.Name</option>
-        } *@
+            <option value="@packageType.PackageTypeId">@packageType.Name</option>
+        }
     </InputSelect>
-    <button type="submit" class="btn btn-primary mt-3">Adaugă pachet</button>
+    <button type="submit" class="btn btn-primary mt-3">@ButtonText</button>
 </EditForm>

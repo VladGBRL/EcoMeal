@@ -8,5 +8,5 @@ public class BusinessDetailsModel
     public string? Description { get; set; }
     public string Contact { get; set; } = "";
     public string BusinessTypeName { get; set; } = "";
-    
+    public List<PackageModel> Packages { get; set; } = new();
 }
