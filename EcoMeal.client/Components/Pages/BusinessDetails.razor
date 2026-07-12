@@ -2,6 +2,8 @@
 @using EcoMeal.client.Models
 @using EcoMeal.client.Services;
 @rendermode InteractiveServer
+@inject AuthService AuthService
+@using Microsoft.AspNetCore.Components.Authorization
 
 @if (Business is null)
 {
@@ -23,9 +25,12 @@
 
     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
         <h2 class="mb-0">Packages</h2>
-        <button type="button" class="btn btn-primary" @onclick="NavigateToAddPackage">
-            + Add package
-        </button>
+        <AuthorizeView Roles="Admin">
+
+            <button type="button" class="btn btn-primary" @onclick="NavigateToAddPackage">
+                + Add package
+            </button>
+        </AuthorizeView>
     </div>
 
     @if (Business.Packages.Count == 0)

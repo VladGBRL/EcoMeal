@@ -2,6 +2,7 @@
 @page "/business/{Id:int}/edit"
 @using EcoMeal.client.Models
 @rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
 
 <h2>@PageTitle</h2>
 
