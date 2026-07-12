@@ -1,6 +1,8 @@
 using EcoMeal.api.Application.Models;
 using EcoMeal.api.Entities;
 using EcoMeal.api.Infrastructure;
+using EcoMeal.api.Application.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +38,7 @@ public class BusinessController: ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Delete(int id)
     {
         var business = await _context.Businesses.FindAsync(id);
