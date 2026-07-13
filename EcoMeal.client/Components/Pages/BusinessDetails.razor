@@ -71,6 +71,8 @@
     [Inject]
     public required BusinessService businessService { get; set; }
     [Inject]
+    public required PackageService packageService { get; set; }
+    [Inject]
     public required NavigationManager NavigationManager { get; set; }
 
     private BusinessDetailsModel? Business;
@@ -92,7 +94,7 @@
 
     public async Task DeletePackage(int packageId)
     {
-        await businessService.DeletePackageAsync(Id, packageId);
+        await packageService.DeletePackageAsync(Id, packageId);
         Business = await businessService.GetOneById(Id);
     }
 }

@@ -34,17 +34,7 @@ public class BusinessService
         }
     }
 
-    public async Task AddPackageToBusiness(int businessId, PackageAddModel package)
-    {
-        await _http.PostAsJsonAsync($"api/business/{businessId}/addPackage", package);
-    }
-
-    public async Task<List<PackageModel>> GetPackagesAsync(int businessId)
-    {
-        var packages = await _http.GetFromJsonAsync<List<PackageModel>>($"api/business/{businessId}/packages");
-        return packages ?? new List<PackageModel>();
-    }
-
+   
     public async Task<List<PackageTypeModel>> GetPackageTypesAsync()
     {
         var packageTypes = await _http.GetFromJsonAsync<List<PackageTypeModel>>("api/business/packageTypes");

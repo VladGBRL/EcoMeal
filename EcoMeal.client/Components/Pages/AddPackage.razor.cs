@@ -13,7 +13,10 @@ namespace EcoMeal.client.Components.Pages
         public int? PackageId { get; set; }
 
         [Inject]
-        public required BusinessService BusinessService { get; set; }
+        public required PackageService PackageService { get; set; }
+
+        [Inject]
+        public required PackageTypeService PackageTypeService { get; set; }
 
         [Inject]
         public required NavigationManager NavigationManager { get; set; }
@@ -35,11 +38,11 @@ namespace EcoMeal.client.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            PackageTypes = await BusinessService.GetPackageTypesAsync();
+            PackageTypes = await PackageTypeService.GetPackageTypesAsync();
 
             if (PackageId.HasValue)
             {
-                var existingPackage = (await BusinessService.GetPackagesAsync(BusinessId))
+                var existingPackage = (await PackageService.GetPackagesAsync(BusinessId))
                     .FirstOrDefault(p => p.PackageId == PackageId.Value);
 
                 if (existingPackage is not null)
@@ -61,12 +64,12 @@ namespace EcoMeal.client.Components.Pages
         {
             if (PackageId.HasValue)
             {
-                await BusinessService.UpdatePackageAsync(BusinessId, PackageId.Value, PackageAddModel);
+                await PackageService.UpdatePackageAsync(BusinessId, PackageId.Value, PackageAddModel);
                 StatusMessage = "Package updated successfully.";
             }
             else
             {
-                await BusinessService.AddPackageToBusiness(BusinessId, PackageAddModel);
+                await PackageService.AddPackageToBusiness(BusinessId, PackageAddModel);
                 StatusMessage = "Package added successfully.";
             }
 
