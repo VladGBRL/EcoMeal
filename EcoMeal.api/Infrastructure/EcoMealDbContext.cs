@@ -46,12 +46,12 @@ public class EcoMealDbContext : IdentityDbContext<User, IdentityRole<int>, int>
             .WithMany()
             .HasForeignKey(o => o.PackageId)
             .OnDelete(DeleteBehavior.Restrict);
-        modelBuilder.Entity<Order>()
+        /*modelBuilder.Entity<Order>()
             .HasOne(u => u.User)
             .WithMany()
             .HasForeignKey(o => o.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-
+*/
     }
 }
