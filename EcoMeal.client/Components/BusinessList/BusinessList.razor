@@ -3,8 +3,10 @@
 @using EcoMeal.client.Models
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Businesses</h2>
-    <a href="/business/add" class="btn btn-primary">+ Add business</a>
+    <h2 class="mb-0 text-success-emphasis">Businesses</h2>
+    <AuthorizeView Roles="Admin">
+        <a href="/business/add" class="btn btn-success">+ Add business</a>
+    </AuthorizeView>
 </div>
 
 @if (Businesses is null)
@@ -21,7 +23,7 @@ else
         <div class="row g-4">
             @foreach (BusinessModel business in Businesses)
             {
-                <div class="col-sm" @key="business.BusinessId">
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4" @key="business.BusinessId">
                     <BusinessCard Business="business" OnDeleted="HandleBusinessDeleted" />
                 </div>
             }

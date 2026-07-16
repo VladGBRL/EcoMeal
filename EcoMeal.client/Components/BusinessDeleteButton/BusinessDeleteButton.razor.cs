@@ -8,6 +8,9 @@ public partial class BusinessDeleteButton
     [Inject]
     public required BusinessService BusinessService { get; set; }
 
+    [Inject]
+    public required ToastService ToastService { get; set; }
+
     [Parameter]
     public int BusinessId { get; set; }
 
@@ -38,6 +41,7 @@ public partial class BusinessDeleteButton
             {
                 Console.WriteLine($"Invoking delete callback for {BusinessId}");
                 _hasSuccess = true;
+                ToastService.ShowSuccess("Business deleted successfully!");
                 if (OnDeleted.HasDelegate)
                 {
                     await OnDeleted.InvokeAsync(BusinessId);
@@ -46,12 +50,14 @@ public partial class BusinessDeleteButton
             else
             {
                 _hasError = true;
+                ToastService.ShowError("Failed to delete business.");
                 Console.WriteLine($"Delete failed for {BusinessId}");
             }
         }
         catch (Exception ex)
         {
             _hasError = true;
+            ToastService.ShowError($"Error deleting business: {ex.Message}");
             Console.WriteLine($"Delete exception for {BusinessId}: {ex.Message}");
         }
         finally

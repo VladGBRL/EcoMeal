@@ -3,6 +3,7 @@
 @using EcoMeal.client.Services;
 @rendermode InteractiveServer
 @inject AuthService AuthService
+@inject ToastService ToastService
 @using Microsoft.AspNetCore.Components.Authorization
 
 @if (Business is null)
@@ -14,14 +15,63 @@
 }
 
 <div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">@Business.Name</h1>
-        <a href="/business/@Id/edit" class="btn btn-outline-secondary btn-sm">Edit business</a>
+        <AuthorizeView Roles="Admin">
+            <a href="/business/@Id/edit" class="btn btn-outline-secondary btn-sm">Edit business</a>
+        </AuthorizeView>
     </div>
-    <p class="text-muted mb-4">@Business.Description</p>
-    <p class="text-muted mb-4"><strong>Contact:</strong> @Business.Contact</p>
-    <p class="text-muted mb-4"><strong>Business type:</strong> @Business.BusinessTypeName</p>
-    <p class="text-muted mb-4"><strong>Address:</strong> @Business.Adress</p>
+
+    @* Two-column row: info left, map right *@
+    <div class="row g-4 mb-4">
+
+        @* LEFT: business info *@
+        <div class="@(Business.Latitude.HasValue && Business.Longitude.HasValue ? "col-12 col-lg-7" : "col-12")">
+            @if (!string.IsNullOrWhiteSpace(Business.Description))
+            {
+                <p class="text-muted mb-3">@Business.Description</p>
+            }
+            <ul class="list-unstyled mb-0">
+                <li class="mb-2">
+                    <i class="bi bi-telephone-fill text-success me-2"></i>
+                    <strong>Contact:</strong> @Business.Contact
+                </li>
+                <li class="mb-2">
+                    <i class="bi bi-shop text-success me-2"></i>
+                    <strong>Business type:</strong> @Business.BusinessTypeName
+                </li>
+                @if (!string.IsNullOrWhiteSpace(Business.Adress))
+                {
+                    <li class="mb-2">
+                        <i class="bi bi-geo text-success me-2"></i>
+                        <strong>Address:</strong> @Business.Adress
+                    </li>
+                }
+                @if (Business.Latitude.HasValue && Business.Longitude.HasValue)
+                {
+                    <li class="mt-3 small text-muted">
+                        <i class="bi bi-crosshair2 text-success me-1"></i>
+                        <strong>Lat:</strong> @Business.Latitude.Value.ToString("F5") &nbsp;
+                        <strong>Lng:</strong> @Business.Longitude.Value.ToString("F5")
+                    </li>
+                }
+            </ul>
+        </div>
+
+        @* RIGHT: map (only when coords are saved) *@
+        @if (Business.Latitude.HasValue && Business.Longitude.HasValue)
+        {
+            <div class="col-12 col-lg-5">
+                <h6 class="fw-semibold mb-2">
+                    <i class="bi bi-geo-alt-fill text-success me-1"></i>Location
+                </h6>
+                <MapViewer AccessToken="@BusinessDetails.MapboxToken"
+                           Latitude="@Business.Latitude.Value"
+                           Longitude="@Business.Longitude.Value"
+                           Height="300px" />
+            </div>
+        }
+    </div>
 
     <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
         <h2 class="mb-0">Packages</h2>
@@ -42,21 +92,46 @@
         <div class="list-group">
             @foreach (var package in Business.Packages)
             {
-                <div class="list-group-item d-flex justify-content-between align-items-start">
-                    <div>
-                        <h5 class="mb-1">@package.Name</h5>
-                        <p class="mb-1">@package.Description</p>
-                        <small>Type: @package.PackageTypeName</small><br />
-                        <small>Price: @package.Price.ToString("0.00")</small><br />
-                        <small>From: @package.StartPickUp.ToString("dd/MM/yyyy HH:mm") to @package.EndPickUp.ToString("dd/MM/yyyy HH:mm")</small>
+                <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1 text-success fw-bold">@package.Name</h5>
+                        <p class="mb-1 text-muted">@package.Description</p>
+                        <div class="d-flex flex-wrap gap-2 align-items-center mt-2 small">
+                            <span class="badge bg-success-subtle text-success-emphasis">@package.PackageTypeName</span>
+                            <span class="text-secondary border-start ps-2">Price: <strong>@package.Price.ToString("0.00") RON</strong></span>
+                            <span class="text-secondary border-start ps-2">Stock: @package.NumberOfPackages left</span>
+                        </div>
+                        <div class="text-muted mt-1 small">
+                            <i class="bi bi-clock-fill text-success me-1"></i> From: @package.StartPickUp.ToString("dd/MM/yyyy HH:mm") to @package.EndPickUp.ToString("dd/MM/yyyy HH:mm")
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-outline-secondary btn-sm" @onclick="() => NavigateToEditPackage(package.PackageId)">
-                            Edit
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" @onclick="() => DeletePackage(package.PackageId)">
-                            Delete
-                        </button>
+                    <div class="d-flex gap-2 align-items-center w-100 w-md-auto mt-2 mt-md-0 justify-content-end">
+                        <AuthorizeView>
+                            <Authorized>
+                                @if (package.NumberOfPackages > 0)
+                                {
+                                    <button class="btn btn-success btn-sm px-3" @onclick="() => OrderPackage(package.PackageId)">
+                                        Order Package
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary btn-sm px-3" disabled>
+                                        Sold Out
+                                    </button>
+                                }
+                            </Authorized>
+                        </AuthorizeView>
+                        <AuthorizeView Roles="Admin" Context="adminContext">
+                            <Authorized>
+                                <button class="btn btn-outline-secondary btn-sm" @onclick="() => NavigateToEditPackage(package.PackageId)">
+                                    Edit
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" @onclick="() => DeletePackage(package.PackageId)">
+                                    Delete
+                                </button>
+                            </Authorized>
+                        </AuthorizeView>
                     </div>
                 </div>
             }
@@ -68,10 +143,15 @@
     [Parameter]
     public int Id { get; set; }
 
+    /// <summary>Replace with your Mapbox public access token.</summary>
+    public const string MapboxToken = "YOUR_MAPBOX_PUBLIC_TOKEN_HERE";
+
     [Inject]
     public required BusinessService businessService { get; set; }
     [Inject]
     public required PackageService packageService { get; set; }
+    [Inject]
+    public required OrderService OrderService { get; set; }
     [Inject]
     public required NavigationManager NavigationManager { get; set; }
 
@@ -94,7 +174,29 @@
 
     public async Task DeletePackage(int packageId)
     {
-        await packageService.DeletePackageAsync(Id, packageId);
+        var success = await packageService.DeletePackageAsync(Id, packageId);
+        if (success)
+        {
+            ToastService.ShowSuccess("Package deleted successfully!");
+        }
+        else
+        {
+            ToastService.ShowError("Failed to delete package.");
+        }
         Business = await businessService.GetOneById(Id);
+    }
+
+    public async Task OrderPackage(int packageId)
+    {
+        var success = await OrderService.PlaceOrderAsync(packageId);
+        if (success)
+        {
+            ToastService.ShowSuccess("Order placed successfully! Check the 'Orders' page.");
+            Business = await businessService.GetOneById(Id);
+        }
+        else
+        {
+            ToastService.ShowError("Failed to place order. Out of stock or connection issue.");
+        }
     }
 }

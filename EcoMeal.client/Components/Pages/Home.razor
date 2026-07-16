@@ -1,9 +1,25 @@
-﻿@page "/"
+@page "/"
 @using EcoMeal.client.Components.BusinessList
+@using EcoMeal.client.Components.BusinessSearch
 
-<PageTitle>Home</PageTitle>
+<PageTitle>EcoMeal - Save Food, Save Money</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container my-4">
+    <!-- Hero Section -->
+    <div class="p-5 mb-4 bg-success-subtle rounded-3 text-success-emphasis border border-success-subtle shadow-sm">
+        <div class="container-fluid py-2">
+            <h1 class="display-5 fw-bold text-success">Welcome to EcoMeal 🌿</h1>
+            <p class="col-md-8 fs-5 mb-0 text-muted">
+                Join our mission to reduce food waste. Discover delicious surplus meals from local businesses at discounted prices!
+            </p>
+        </div>
+    </div>
 
-Welcome to your new app.
- <BusinessList></BusinessList>
+    <!-- Search -->
+    <BusinessSearch />
+
+    <!-- Main List of Businesses -->
+    <div class="py-2">
+        <BusinessList />
+    </div>
+</div>

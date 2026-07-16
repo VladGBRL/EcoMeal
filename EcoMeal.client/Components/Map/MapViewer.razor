@@ -1,0 +1,19 @@
+@rendermode InteractiveServer
+
+<div class="map-viewer-wrapper">
+    <div id="@_containerId"
+         style="width: 100%; height: @Height; border-radius: 0.5rem; overflow: hidden; border: 1px solid #dee2e6;"
+         class="shadow-sm">
+    </div>
+    @if (ShowCoordinates)
+    {
+        <div class="mt-1 small text-muted d-flex gap-3">
+            <span><i class="bi bi-geo-alt-fill text-success me-1"></i>
+                <strong>Lat:</strong> @Latitude.ToString("F6")
+            </span>
+            <span>
+                <strong>Lng:</strong> @Longitude.ToString("F6")
+            </span>
+        </div>
+    }
+</div>

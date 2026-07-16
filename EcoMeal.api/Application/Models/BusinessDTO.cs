@@ -10,5 +10,7 @@ namespace EcoMeal.api.Application.Models
         public required string Contact { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public required string BusinessTypeName {get; set;} = string.Empty;
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<PackageService>();
 builder.Services.AddScoped<PackageTypeService>();
+builder.Services.AddScoped<ToastService>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthService>();

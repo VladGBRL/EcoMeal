@@ -8,5 +8,7 @@ public class BusinessDetailsModel
     public string? Description { get; set; }
     public string Contact { get; set; } = "";
     public string BusinessTypeName { get; set; } = "";
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public List<PackageModel> Packages { get; set; } = new();
 }

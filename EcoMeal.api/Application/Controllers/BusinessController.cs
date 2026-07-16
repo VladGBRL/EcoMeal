@@ -31,10 +31,42 @@ public class BusinessController: ControllerBase
                 Address = b.Address,
                 Description = b.Description,
                 Contact = b.Contact,
-                BusinessTypeName = b.BusinessType.Name
+                BusinessTypeName = b.BusinessType.Name,
+                Latitude = b.Latitude,
+                Longitude = b.Longitude
             }).ToListAsync();
 
         return Ok(businessesDTOs);
+    }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<BusinessDTO>>> Search([FromQuery] string? q)
+    {
+        var query = _context.Businesses
+            .Include(b => b.BusinessType)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            var lower = q.ToLower();
+            query = query.Where(b =>
+                b.Name.ToLower().Contains(lower) ||
+                b.Description.ToLower().Contains(lower));
+        }
+
+        var result = await query.Select(b => new BusinessDTO
+        {
+            BusinessId = b.BusinessId,
+            Name = b.Name,
+            Address = b.Address,
+            Description = b.Description,
+            Contact = b.Contact,
+            BusinessTypeName = b.BusinessType.Name,
+            Latitude = b.Latitude,
+            Longitude = b.Longitude
+        }).ToListAsync();
+
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
@@ -66,6 +98,8 @@ public class BusinessController: ControllerBase
                 Description = b.Description,
                 Contact = b.Contact,
                 BusinessTypeName = b.BusinessType.Name,
+                Latitude = b.Latitude,
+                Longitude = b.Longitude,
                 Packages = b.Packages.Select(p => new PackageDTO
                 {
                     PackageId = p.PackageId,
@@ -74,7 +108,8 @@ public class BusinessController: ControllerBase
                     Price = p.Price,
                     StartPickUp = p.StartPickUp,
                     EndPickUp = p.EndPickUp,
-                    PackageTypeName = p.PackageType != null ? p.PackageType.Name : string.Empty
+                    PackageTypeName = p.PackageType != null ? p.PackageType.Name : string.Empty,
+                    NumberOfPackages = p.NumberOfPackages
                 }).ToList()
             })
             .FirstOrDefaultAsync(b => b.BusinessId == id);
@@ -100,7 +135,8 @@ public class BusinessController: ControllerBase
                 Price = p.Price,
                 StartPickUp = p.StartPickUp,
                 EndPickUp = p.EndPickUp,
-                PackageTypeName = p.PackageType != null ? p.PackageType.Name : string.Empty
+                PackageTypeName = p.PackageType != null ? p.PackageType.Name : string.Empty,
+                NumberOfPackages = p.NumberOfPackages
             })
             .ToListAsync();
 
@@ -141,7 +177,9 @@ public class BusinessController: ControllerBase
             Contact = dto.Contact,
             Description = dto.Description,
             BusinessTypeId = dto.BusinessTypeId,
-            BusinessType = businessType
+            BusinessType = businessType,
+            Latitude = dto.Latitude,
+            Longitude = dto.Longitude
         };
 
         _context.Businesses.Add(business);
@@ -161,6 +199,8 @@ public class BusinessController: ControllerBase
         business.Contact = dto.Contact;
         business.Description = dto.Description;
         business.BusinessTypeId = dto.BusinessTypeId;
+        business.Latitude = dto.Latitude;
+        business.Longitude = dto.Longitude;
 
         await _context.SaveChangesAsync();
         return NoContent();

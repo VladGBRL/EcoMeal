@@ -4,42 +4,72 @@
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "Admin")]
 
-<h2>@PageTitle</h2>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-body p-4 p-sm-5">
+                    <h2 class="text-success mb-4 fw-bold text-center">@PageTitle</h2>
+                    
+                    @if (!string.IsNullOrEmpty(StatusMessage))
+                    {
+                        <div class="alert alert-success mb-4 shadow-sm">@StatusMessage</div>
+                    }
 
-@if (!string.IsNullOrEmpty(StatusMessage))
-{
-    <div class="alert alert-success">@StatusMessage</div>
-}
+                    <EditForm Model="Model" OnValidSubmit="HandleSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger small mb-4" />
 
-<EditForm Model="Model" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Name</label>
+                            <InputText class="form-control" @bind-Value="Model.Name" placeholder="EcoMeal Restaurant" />
+                            <ValidationMessage For="@(() => Model.Name)" class="text-danger small" />
+                        </div>
 
-    <label class="form-label">Name</label>
-    <InputText class="form-control mb-2" @bind-Value="Model.Name" placeholder="Business name" />
-    <ValidationMessage For="@(() => Model.Name)" />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Address</label>
+                            <InputText class="form-control" @bind-Value="Model.Address" placeholder="123 Green Street" />
+                            <ValidationMessage For="@(() => Model.Address)" class="text-danger small" />
+                        </div>
 
-    <label class="form-label">Address</label>
-    <InputText class="form-control mb-2" @bind-Value="Model.Address" placeholder="Address" />
-    <ValidationMessage For="@(() => Model.Address)" />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Contact</label>
+                            <InputText class="form-control" @bind-Value="Model.Contact" placeholder="+40 700 000 000" />
+                            <ValidationMessage For="@(() => Model.Contact)" class="text-danger small" />
+                        </div>
 
-    <label class="form-label">Contact</label>
-    <InputText class="form-control mb-2" @bind-Value="Model.Contact" placeholder="Contact" />
-    <ValidationMessage For="@(() => Model.Contact)" />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <InputTextArea class="form-control" @bind-Value="Model.Description" placeholder="Tell us about your surplus food..." rows="3" />
+                        </div>
 
-    <label class="form-label">Description</label>
-    <InputTextArea class="form-control mb-2" @bind-Value="Model.Description" placeholder="Description" />
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Business type</label>
+                            <InputSelect @bind-Value="Model.BusinessTypeId" class="form-select">
+                                <option value="0" disabled>Choose business type...</option>
+                                @foreach (var type in BusinessTypes)
+                                {
+                                    <option value="@type.BusinessTypeId">@type.Name</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => Model.BusinessTypeId)" class="text-danger small" />
+                        </div>
 
-    <label class="form-label">Business type</label>
-    <InputSelect @bind-Value="Model.BusinessTypeId" class="form-control mb-2">
-        <option value="0" disabled>Choose business type...</option>
-        @foreach (var type in BusinessTypes)
-        {
-            <option value="@type.BusinessTypeId">@type.Name</option>
-        }
-    </InputSelect>
-    <ValidationMessage For="@(() => Model.BusinessTypeId)" />
+                        <div class="mb-4">
+                            <MapPicker AccessToken="@MapboxToken"
+                                       InitialLat="@Model.Latitude"
+                                       InitialLng="@Model.Longitude"
+                                       OnLocationChanged="@HandleLocationChanged"
+                                       OnLocationCleared="@HandleLocationCleared" />
+                        </div>
 
-    <button type="submit" class="btn btn-primary mt-3">@ButtonText</button>
-    <a href="/" class="btn btn-secondary mt-3 ms-2">Cancel</a>
-</EditForm>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success px-4 py-2 fw-semibold">@ButtonText</button>
+                            <a href="/" class="btn btn-outline-secondary px-4 py-2 fw-semibold">Cancel</a>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

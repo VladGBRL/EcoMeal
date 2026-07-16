@@ -21,6 +21,9 @@ namespace EcoMeal.client.Components.Pages
         [Inject]
         public required NavigationManager NavigationManager { get; set; }
 
+        [Inject]
+        public required ToastService ToastService { get; set; }
+
         public PackageAddModel PackageAddModel { get; set; } = new PackageAddModel()
         {
             Name = string.Empty,
@@ -62,18 +65,36 @@ namespace EcoMeal.client.Components.Pages
 
         public async Task HandleSubmit()
         {
+            bool success;
             if (PackageId.HasValue)
             {
-                await PackageService.UpdatePackageAsync(BusinessId, PackageId.Value, PackageAddModel);
-                StatusMessage = "Package updated successfully.";
+                success = await PackageService.UpdatePackageAsync(BusinessId, PackageId.Value, PackageAddModel);
+                if (success)
+                {
+                    ToastService.ShowSuccess("Package updated successfully!");
+                }
+                else
+                {
+                    ToastService.ShowError("Failed to update package.");
+                }
             }
             else
             {
-                await PackageService.AddPackageToBusiness(BusinessId, PackageAddModel);
-                StatusMessage = "Package added successfully.";
+                success = await PackageService.AddPackageToBusiness(BusinessId, PackageAddModel);
+                if (success)
+                {
+                    ToastService.ShowSuccess("Package added successfully!");
+                }
+                else
+                {
+                    ToastService.ShowError("Failed to add package.");
+                }
             }
 
-            NavigationManager.NavigateTo($"/business/{BusinessId}");
+            if (success)
+            {
+                NavigationManager.NavigateTo($"/business/{BusinessId}");
+            }
         }
     }
 }

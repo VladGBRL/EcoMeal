@@ -1,6 +1,6 @@
 @namespace EcoMeal.client.Components.BusinessDeleteButton
 
-<button type="button" class="btn btn-danger" @onclick="HandleDeleteAsync" @onclick:stopPropagation="true" disabled="@_isDeleting">
+<button type="button" class="btn btn-danger btn-sm" @onclick="HandleDeleteAsync" @onclick:stopPropagation="true" disabled="@_isDeleting">
     @if (_isDeleting)
     {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

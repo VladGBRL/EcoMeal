@@ -17,4 +17,7 @@ public class BusinessAddModel
 
     [Range(1, int.MaxValue, ErrorMessage = "Please select a business type.")]
     public int BusinessTypeId { get; set; }
+
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
 }

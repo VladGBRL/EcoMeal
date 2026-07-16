@@ -15,26 +15,45 @@ public class OrderService
 
     public async Task<bool> PlaceOrderAsync(int packageId)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, "api/order")
+        try
         {
-            Content = JsonContent.Create(new { PackageId = packageId })
-        };
-        await AddAuthHeaderAsync(request);
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/order")
+            {
+                Content = JsonContent.Create(new { PackageId = packageId })
+            };
+            await AddAuthHeaderAsync(request);
 
-        var response = await _http.SendAsync(request);
-        return response.IsSuccessStatusCode;
+            var response = await _http.SendAsync(request);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception in PlaceOrderAsync: {ex.Message}");
+            return false;
+        }
     }
 
     public async Task<List<OrderGetModel>> GetMyOrdersAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "api/order/my");
-        await AddAuthHeaderAsync(request);
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/order/my");
+            await AddAuthHeaderAsync(request);
 
-        var response = await _http.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+            var response = await _http.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                return new List<OrderGetModel>();
+            }
 
-        var orders = await response.Content.ReadFromJsonAsync<List<OrderGetModel>>();
-        return orders ?? new List<OrderGetModel>();
+            var orders = await response.Content.ReadFromJsonAsync<List<OrderGetModel>>();
+            return orders ?? new List<OrderGetModel>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception in GetMyOrdersAsync: {ex.Message}");
+            return new List<OrderGetModel>();
+        }
     }
 
 

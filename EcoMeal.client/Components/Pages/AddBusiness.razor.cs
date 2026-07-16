@@ -15,13 +15,15 @@ public partial class AddBusiness
     [Inject]
     public required NavigationManager NavigationManager { get; set; }
 
+    [Inject]
+    public required ToastService ToastService { get; set; }
+    public const string MapboxToken = "My Token";
     public BusinessAddModel Model { get; set; } = new();
     public List<BusinessTypeModel> BusinessTypes { get; set; } = new();
     public string StatusMessage { get; set; } = string.Empty;
 
     public string PageTitle => Id.HasValue ? "Edit business" : "Add business";
     public string ButtonText => Id.HasValue ? "Save changes" : "Add business";
-
     protected override async Task OnInitializedAsync()
     {
         BusinessTypes = await BusinessService.GetBusinessTypesAsync();
@@ -34,27 +36,60 @@ public partial class AddBusiness
                 Model = new BusinessAddModel
                 {
                     Name = existing.Name,
-                    Address = existing.Adress,   // client model uses "Adress" spelling
+                    Address = existing.Adress,   
                     Contact = existing.Contact,
                     Description = existing.Description ?? string.Empty,
                     BusinessTypeId = BusinessTypes
-                        .FirstOrDefault(t => t.Name == existing.BusinessTypeName)?.BusinessTypeId ?? 0
+                        .FirstOrDefault(t => t.Name == existing.BusinessTypeName)?.BusinessTypeId ?? 0,
+                    Latitude = existing.Latitude,
+                    Longitude = existing.Longitude
                 };
             }
         }
     }
 
+    public void HandleLocationChanged((double Lat, double Lng) location)
+    {
+        Model.Latitude = location.Lat;
+        Model.Longitude = location.Lng;
+    }
+
+    public void HandleLocationCleared()
+    {
+        Model.Latitude = null;
+        Model.Longitude = null;
+    }
     public async Task HandleSubmit()
     {
+        bool success;
         if (Id.HasValue)
         {
-            await BusinessService.UpdateBusinessAsync(Id.Value, Model);
+            success = await BusinessService.UpdateBusinessAsync(Id.Value, Model);
+            if (success)
+            {
+                ToastService.ShowSuccess("Business updated successfully!");
+            }
+            else
+            {
+                ToastService.ShowError("Failed to update business.");
+            }
         }
         else
         {
-            await BusinessService.CreateBusinessAsync(Model);
+            success = await BusinessService.CreateBusinessAsync(Model);
+            if (success)
+            {
+                ToastService.ShowSuccess("Business added successfully!");
+            }
+            else
+            {
+                ToastService.ShowError("Failed to add business.");
+            }
         }
 
-        NavigationManager.NavigateTo("/");
+        if (success)
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

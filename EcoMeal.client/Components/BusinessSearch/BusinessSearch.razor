@@ -1,0 +1,85 @@
+@namespace EcoMeal.client.Components.BusinessSearch
+@using EcoMeal.client.Models
+@using EcoMeal.client.Services
+
+<div class="business-search mb-4">
+    <div class="input-group shadow-sm">
+        <span class="input-group-text bg-success text-white border-success">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="text"
+               id="business-search-input"
+               class="form-control border-success"
+               placeholder="Search businesses by name or description..."
+               @bind="searchQuery"
+               @bind:event="oninput"
+               @onkeyup="HandleKeyUp" />
+        @if (!string.IsNullOrEmpty(searchQuery))
+        {
+            <button class="btn btn-outline-secondary" type="button" @onclick="ClearSearch" title="Clear search">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        }
+        <button class="btn btn-success" type="button" @onclick="ExecuteSearch" id="search-btn">
+            Search
+        </button>
+    </div>
+
+    @if (isSearchActive)
+    {
+        <div class="mt-3">
+            @if (isLoading)
+            {
+                <div class="d-flex align-items-center gap-2 text-muted">
+                    <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                    <span>Searching...</span>
+                </div>
+            }
+            else if (results is not null && results.Count == 0)
+            {
+                <div class="alert alert-warning d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    No businesses found for <strong>&nbsp;"@lastQuery"</strong>.
+                </div>
+            }
+            else if (results is not null)
+            {
+                <p class="text-muted small mb-2">
+                    <i class="bi bi-check2-circle text-success me-1"></i>
+                    @results.Count result(s) for <strong>"@lastQuery"</strong>
+                </p>
+                <div class="row g-3">
+                    @foreach (var business in results)
+                    {
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="card h-100 border-success-subtle shadow-sm">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-2">
+                                        <span class="badge bg-success-subtle text-success-emphasis">
+                                            @business.BusinessTypeName
+                                        </span>
+                                    </div>
+                                    <h5 class="card-title text-success mb-1">@business.Name</h5>
+                                    <p class="card-text text-muted flex-grow-1 small">@business.Description</p>
+                                    <div class="small text-muted mb-3">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <i class="bi bi-geo-alt-fill text-success me-2"></i>
+                                            @business.Address
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-telephone-fill text-success me-2"></i>
+                                            @business.Contact
+                                        </div>
+                                    </div>
+                                    <a href="/business/@business.BusinessId" class="btn btn-outline-success btn-sm mt-auto">
+                                        <i class="bi bi-arrow-right-circle me-1"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

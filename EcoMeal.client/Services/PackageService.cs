@@ -12,9 +12,10 @@ public class PackageService
         _http = http;
     }
 
-    public async Task AddPackageToBusiness(int businessId, PackageAddModel package)
+    public async Task<bool> AddPackageToBusiness(int businessId, PackageAddModel package)
     {
-        await _http.PostAsJsonAsync($"api/business/{businessId}/addPackage", package);
+        var response = await _http.PostAsJsonAsync($"api/business/{businessId}/addPackage", package);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<List<PackageModel>> GetPackagesAsync(int businessId)
@@ -23,9 +24,10 @@ public class PackageService
         return packages ?? new List<PackageModel>();
     }
 
-    public async Task UpdatePackageAsync(int businessId, int packageId, PackageAddModel package)
+    public async Task<bool> UpdatePackageAsync(int businessId, int packageId, PackageAddModel package)
     {
-        await _http.PutAsJsonAsync($"api/business/{businessId}/packages/{packageId}", package);
+        var response = await _http.PutAsJsonAsync($"api/business/{businessId}/packages/{packageId}", package);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeletePackageAsync(int businessId, int packageId)

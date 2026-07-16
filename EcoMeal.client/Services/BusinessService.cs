@@ -15,6 +15,21 @@ public class BusinessService
         var businesses = await _http.GetFromJsonAsync<List<BusinessModel>>("/api/business");
         return businesses ?? new List<BusinessModel>();
     }
+
+    public async Task<List<BusinessModel>> SearchAsync(string query)
+    {
+        try
+        {
+            var encoded = Uri.EscapeDataString(query);
+            var businesses = await _http.GetFromJsonAsync<List<BusinessModel>>($"/api/business/search?q={encoded}");
+            return businesses ?? new List<BusinessModel>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"SearchAsync error: {ex.Message}");
+            return new List<BusinessModel>();
+        }
+    }
      public async Task<bool> DeleteAsync(int id)
     {
         var response = await _http.DeleteAsync($"/api/business/{id}");
@@ -52,14 +67,16 @@ public class BusinessService
         return types ?? new List<BusinessTypeModel>();
     }
 
-    public async Task CreateBusinessAsync(BusinessAddModel model)
+    public async Task<bool> CreateBusinessAsync(BusinessAddModel model)
     {
-        await _http.PostAsJsonAsync("api/business", model);
+        var response = await _http.PostAsJsonAsync("api/business", model);
+        return response.IsSuccessStatusCode;
     }
 
-    public async Task UpdateBusinessAsync(int id, BusinessAddModel model)
+    public async Task<bool> UpdateBusinessAsync(int id, BusinessAddModel model)
     {
-        await _http.PutAsJsonAsync($"api/business/{id}", model);
+        var response = await _http.PutAsJsonAsync($"api/business/{id}", model);
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> DeletePackageAsync(int businessId, int packageId)
